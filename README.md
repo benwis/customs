@@ -21,7 +21,7 @@ section to set the opt-level for your crate and its dependencies
 [profile.dev]
 opt-level = 0
 
-[profile.dev.package.*]
+[profile.dev.package."*"]
 opt-level = 0
 
 [profile.server-dev]
