@@ -15,7 +15,7 @@ see the README for details
 rustup component add rustc-codegen-cranelift-preview --toolchain nightly
 ```
 ## Usage
-1. Create a dev-server profile in Cargo.toml by adding the section below
+1. Create a server-dev profile in Cargo.toml by adding the section below
 ```toml
 [profile.server-dev]
 inherits="dev"
