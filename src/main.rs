@@ -18,7 +18,8 @@ struct Args {
 fn main() -> Result<(), Error> {
     println!("Running customs check on cargo!");
     let args = Args::parse();
-    let sed_command = r#"sed -i -e "s/\(<dfn>\).*\(<\/dfn>\)/<dfn>\"$(date +%mm%s)\"<\/dfn>/g" src/routes/index.rs"#;
+    let sed_command =
+        r#"sed -i -e "s|<dfn>[^<]*</dfn>|<dfn>$(date +%m%s)</dfn>|g" src/routes/index.rs"#;
     //1. Assume a clean state for compilation tests
     //2. Do clean compile and measure results with hyperfine?
     //3. Incremental compile run with hyperfine (Clean)
