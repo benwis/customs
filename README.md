@@ -15,8 +15,15 @@ see the README for details
 rustup component add rustc-codegen-cranelift-preview --toolchain nightly
 ```
 ## Usage
-1. Create a server-dev profile in Cargo.toml by adding the section below
+1. Create a server-dev profile in Cargo.toml by adding the section below. Add a
+section to set the opt-level for your crate and its dependencies
 ```toml
+[profile.dev]
+opt-level = 0
+
+[profile.dev.package.*]
+opt-level = 0
+
 [profile.server-dev]
 inherits="dev"
 ```
