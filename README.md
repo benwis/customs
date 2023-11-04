@@ -17,7 +17,7 @@ rustup component add rustc-codegen-cranelift-preview --toolchain nightly
 ## Usage
 1. Create a dev-server profile in Cargo.toml by adding the section below
 ```toml
-[profile.dev-server]
+[profile.server-dev]
 inherits="dev"
 ```
 2. Enable the unstable codegen-backend feature in .cargo/config.toml. If the folder or file doesn't exist, create them.
@@ -27,7 +27,7 @@ the tool will handle this for you.
 [unstable]
 codegen-backend = true
 
-[profile.dev-server]
+[profile.server-dev]
 ```
 3. Run it
 ```bash
