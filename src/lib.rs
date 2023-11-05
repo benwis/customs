@@ -7,6 +7,8 @@ use typed_builder::TypedBuilder;
 #[derive(PartialEq, Debug, TypedBuilder)]
 pub struct CargoCommandOptions {
     num_runs: u8,
+    #[builder(default = 0)]
+    num_warmup_runs: u8,
     prepare_command: String,
     cargo_command: String,
     output_dir: String,
@@ -24,7 +26,7 @@ pub fn inspect(opts: &CargoCommandOptions) -> Result<(), Error> {
         "-p",
         &opts.prepare_command,
         "--warmup",
-        "1",
+        &opts.num_warmup_runs.to_string(),
         &opts.cargo_command,
         "--export-json",
         format!("{}/{}.json", &opts.output_dir, &opts.run_name),
