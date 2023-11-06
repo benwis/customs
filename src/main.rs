@@ -12,9 +12,9 @@ struct Args {
     #[arg(short, long)]
     output_dir: String,
     #[arg(short, long, default_value_t = 10)]
-    num_runs: u8,
+    runs: u8,
     #[arg(short, long, default_value_t = 0)]
-    num_warmup_runs: u8,
+    warmup_runs: u8,
 }
 
 fn main() -> Result<(), Error> {
@@ -28,7 +28,7 @@ fn main() -> Result<(), Error> {
     println!("Default Options");
     let clean_clean = CargoCommandOptions::builder()
         .prepare_command("cargo clean".to_string())
-        .num_runs(args.num_runs)
+        .runs(args.runs)
         .cargo_command("cargo leptos build".to_string())
         .output_dir(args.output_dir.to_string())
         .run_name("clean".to_string())
@@ -37,7 +37,7 @@ fn main() -> Result<(), Error> {
     inspect(&clean_clean)?;
     let clean_incremental = CargoCommandOptions::builder()
         .prepare_command(sed_command.to_string())
-        .num_runs(args.num_runs)
+        .runs(args.runs)
         .cargo_command("cargo leptos build".to_string())
         .output_dir(args.output_dir.to_string())
         .run_name("clean".to_string())
@@ -49,7 +49,7 @@ fn main() -> Result<(), Error> {
     println!("Mold Enabled");
     let clean_clean = CargoCommandOptions::builder()
         .prepare_command("cargo clean".to_string())
-        .num_runs(args.num_runs)
+        .runs(args.runs)
         .cargo_command("mold -run cargo leptos build".to_string())
         .output_dir(args.output_dir.to_string())
         .run_name("clean_mold".to_string())
@@ -59,7 +59,7 @@ fn main() -> Result<(), Error> {
 
     let clean_incremental = CargoCommandOptions::builder()
         .prepare_command(sed_command.to_string())
-        .num_runs(args.num_runs)
+        .runs(args.runs)
         .cargo_command("mold -run cargo leptos build".to_string())
         .output_dir(args.output_dir.to_string())
         .run_name("incremental_mold".to_string())
@@ -72,7 +72,7 @@ fn main() -> Result<(), Error> {
     println!("O3 and Mold Enabled");
     let clean_clean = CargoCommandOptions::builder()
         .prepare_command("cargo clean".to_string())
-        .num_runs(args.num_runs)
+        .runs(args.runs)
         .cargo_command("mold -run cargo leptos build".to_string())
         .output_dir(args.output_dir.to_string())
         .run_name("clean_mold_o3".to_string())
@@ -82,8 +82,8 @@ fn main() -> Result<(), Error> {
 
     let clean_incremental = CargoCommandOptions::builder()
         .prepare_command(sed_command.to_string())
-        .num_runs(args.num_runs)
-        .num_warmup_runs(args.num_warmup_runs)
+        .runs(args.runs)
+        .warmup_runs(args.warmup_runs)
         .cargo_command("mold -run cargo leptos build".to_string())
         .output_dir(args.output_dir.to_string())
         .run_name("incremental_mold_o3".to_string())
@@ -96,7 +96,7 @@ fn main() -> Result<(), Error> {
     println!("O3, Mold, And Cranelift Enabled");
     let clean_clean = CargoCommandOptions::builder()
         .prepare_command("cargo clean".to_string())
-        .num_runs(args.num_runs)
+        .runs(args.runs)
         .cargo_command("mold -run cargo leptos build".to_string())
         .output_dir(args.output_dir.to_string())
         .run_name("clean_mold_o3_cranelift".to_string())
@@ -106,7 +106,7 @@ fn main() -> Result<(), Error> {
 
     let clean_incremental = CargoCommandOptions::builder()
         .prepare_command(sed_command.to_string())
-        .num_runs(args.num_runs)
+        .runs(args.runs)
         .cargo_command("mold -run cargo leptos build".to_string())
         .output_dir(args.output_dir.to_string())
         .run_name("incremental_mold_o3_cranelift".to_string())
@@ -118,7 +118,7 @@ fn main() -> Result<(), Error> {
     println!("Cranelift and O3 Enabled");
     let clean_clean = CargoCommandOptions::builder()
         .prepare_command("cargo clean".to_string())
-        .num_runs(args.num_runs)
+        .runs(args.runs)
         .cargo_command("cargo leptos build".to_string())
         .output_dir(args.output_dir.to_string())
         .run_name("clean_o3_cranelift".to_string())
@@ -128,7 +128,7 @@ fn main() -> Result<(), Error> {
 
     let clean_incremental = CargoCommandOptions::builder()
         .prepare_command(sed_command.to_string())
-        .num_runs(args.num_runs)
+        .runs(args.runs)
         .cargo_command("cargo leptos build".to_string())
         .output_dir(args.output_dir.to_string())
         .run_name("incremental_o3_cranelift".to_string())
@@ -141,7 +141,7 @@ fn main() -> Result<(), Error> {
     disable_o3(&args.cargo_dir)?;
     let clean_clean = CargoCommandOptions::builder()
         .prepare_command("cargo clean".to_string())
-        .num_runs(args.num_runs)
+        .runs(args.runs)
         .cargo_command("mold -run cargo leptos build".to_string())
         .output_dir(args.output_dir.to_string())
         .run_name("clean_mold_cranelift".to_string())
@@ -151,7 +151,7 @@ fn main() -> Result<(), Error> {
 
     let clean_incremental = CargoCommandOptions::builder()
         .prepare_command(sed_command.to_string())
-        .num_runs(args.num_runs)
+        .runs(args.runs)
         .cargo_command("mold -run cargo leptos build".to_string())
         .output_dir(args.output_dir.to_string())
         .run_name("incremental_mold_cranelift".to_string())
@@ -164,7 +164,7 @@ fn main() -> Result<(), Error> {
     disable_o3(&args.cargo_dir)?;
     let clean_clean = CargoCommandOptions::builder()
         .prepare_command("cargo clean".to_string())
-        .num_runs(args.num_runs)
+        .runs(args.runs)
         .cargo_command("cargo leptos build".to_string())
         .output_dir(args.output_dir.to_string())
         .run_name("clean_cranelift".to_string())
@@ -174,7 +174,7 @@ fn main() -> Result<(), Error> {
 
     let clean_incremental = CargoCommandOptions::builder()
         .prepare_command(sed_command.to_string())
-        .num_runs(args.num_runs)
+        .runs(args.runs)
         .cargo_command("cargo leptos build".to_string())
         .output_dir(args.output_dir.to_string())
         .run_name("incremental_cranelift".to_string())
@@ -188,7 +188,7 @@ fn main() -> Result<(), Error> {
     enable_o3(&args.cargo_dir)?;
     let clean_clean = CargoCommandOptions::builder()
         .prepare_command("cargo clean".to_string())
-        .num_runs(args.num_runs)
+        .runs(args.runs)
         .cargo_command("cargo leptos build".to_string())
         .output_dir(args.output_dir.to_string())
         .run_name("clean_o3".to_string())
@@ -198,7 +198,7 @@ fn main() -> Result<(), Error> {
 
     let clean_incremental = CargoCommandOptions::builder()
         .prepare_command(sed_command.to_string())
-        .num_runs(args.num_runs)
+        .runs(args.runs)
         .cargo_command("cargo leptos build".to_string())
         .output_dir(args.output_dir.to_string())
         .run_name("incremental_o3".to_string())

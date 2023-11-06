@@ -6,9 +6,9 @@ use typed_builder::TypedBuilder;
 
 #[derive(PartialEq, Debug, TypedBuilder)]
 pub struct CargoCommandOptions {
-    num_runs: u8,
+    runs: u8,
     #[builder(default = 0)]
-    num_warmup_runs: u8,
+    warmup_runs: u8,
     prepare_command: String,
     cargo_command: String,
     output_dir: String,
@@ -17,7 +17,7 @@ pub struct CargoCommandOptions {
 }
 
 pub fn inspect(opts: &CargoCommandOptions) -> Result<(), Error> {
-    let runs = format!("--runs={}", &opts.num_runs);
+    let runs = format!("--runs={}", &opts.runs);
     std::env::set_current_dir(&opts.compile_path).unwrap();
 
     cmd!("pwd").run()?;
@@ -26,7 +26,7 @@ pub fn inspect(opts: &CargoCommandOptions) -> Result<(), Error> {
         "-p",
         &opts.prepare_command,
         "--warmup",
-        &opts.num_warmup_runs.to_string(),
+        &opts.warmup_runs.to_string(),
         &opts.cargo_command,
         "--export-json",
         format!("{}/{}.json", &opts.output_dir, &opts.run_name),
