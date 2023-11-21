@@ -1,7 +1,7 @@
 use duct::cmd;
 use std::fs;
 use std::io::{prelude::*, Error};
-use toml_edit::{value, Document};
+use toml_edit::{value, Array, Document};
 use typed_builder::TypedBuilder;
 
 #[derive(PartialEq, Debug, TypedBuilder)]
@@ -124,6 +124,121 @@ pub fn disable_cranelift(cargo_dir: &str) -> Result<(), Error> {
     }
 
     let new_toml_string = toml.to_string();
+
+    let mut config_toml = std::fs::OpenOptions::new()
+        .write(true)
+        .truncate(true)
+        .open(format!("{cargo_dir}/.cargo/config.toml"))?;
+    config_toml
+        .write_all(new_toml_string.as_bytes())
+        .expect("Failed Write");
+
+    let mut config_toml = fs::File::open(format!("{cargo_dir}/.cargo/config.toml"))?;
+    let mut config_toml_string = String::new();
+    config_toml.read_to_string(&mut config_toml_string)?;
+    Ok(())
+}
+
+pub fn enable_parallel(cargo_dir: &str) -> Result<(), Error> {
+    let mut config_toml = fs::File::open(format!("{cargo_dir}/.cargo/config.toml"))?;
+    let mut config_toml_string = String::new();
+    config_toml.read_to_string(&mut config_toml_string)?;
+
+    let mut toml = config_toml_string.parse::<Document>().unwrap();
+    let build = &mut toml["build"];
+
+    if let toml_edit::Item::Table(t) = build {
+        if t.contains_key("rustflags") {
+            return Ok(());
+        } else {
+            let mut flags = Array::new();
+            flags.push("-Z");
+            flags.push("threads=8");
+            t["rustflags"] = value(flags);
+        }
+    } else {
+        let mut flags = Array::new();
+        flags.push("-Z");
+        flags.push("threads=8");
+        toml["build"]["rustflags"] = value(flags);
+    }
+
+    let new_toml_string = toml.to_string();
+
+    let mut config_toml = std::fs::OpenOptions::new()
+        .write(true)
+        .truncate(true)
+        .open(format!("{cargo_dir}/.cargo/config.toml"))?;
+    config_toml
+        .write_all(new_toml_string.as_bytes())
+        .expect("Failed Write");
+
+    let mut config_toml = fs::File::open(format!("{cargo_dir}/.cargo/config.toml"))?;
+    let mut config_toml_string = String::new();
+    config_toml.read_to_string(&mut config_toml_string)?;
+    Ok(())
+}
+pub fn disable_parallel(cargo_dir: &str) -> Result<(), Error> {
+    let mut config_toml = fs::File::open(format!("{cargo_dir}/.cargo/config.toml"))?;
+    let mut config_toml_string = String::new();
+    config_toml.read_to_string(&mut config_toml_string)?;
+
+    let mut toml = config_toml_string.parse::<Document>().unwrap();
+    let rust_flags = &mut toml["build"];
+    if let toml_edit::Item::Table(t) = rust_flags {
+        if t.contains_key("rustflags") {
+            t.remove("rustflags");
+        } else {
+            return Ok(());
+        }
+    }
+
+    let new_toml_string = toml.to_string();
+
+    let mut config_toml = std::fs::OpenOptions::new()
+        .write(true)
+        .truncate(true)
+        .open(format!("{cargo_dir}/.cargo/config.toml"))?;
+    config_toml
+        .write_all(new_toml_string.as_bytes())
+        .expect("Failed Write");
+
+    let mut config_toml = fs::File::open(format!("{cargo_dir}/.cargo/config.toml"))?;
+    let mut config_toml_string = String::new();
+    config_toml.read_to_string(&mut config_toml_string)?;
+    Ok(())
+}
+
+pub fn enable_mold(cargo_dir: &str) -> Result<(), Error> {
+    let mut config_toml = fs::File::open(format!("{cargo_dir}/.cargo/config.toml"))?;
+    let mut config_toml_string = String::new();
+    config_toml.read_to_string(&mut config_toml_string)?;
+
+    let new_toml_string = config_toml_string
+        .replace("#linker", "linker")
+        .replace("#rustflags = [\"-C", "rustflags = [\"-C");
+
+    let mut config_toml = std::fs::OpenOptions::new()
+        .write(true)
+        .truncate(true)
+        .open(format!("{cargo_dir}/.cargo/config.toml"))?;
+    config_toml
+        .write_all(new_toml_string.as_bytes())
+        .expect("Failed Write");
+
+    let mut config_toml = fs::File::open(format!("{cargo_dir}/.cargo/config.toml"))?;
+    let mut config_toml_string = String::new();
+    config_toml.read_to_string(&mut config_toml_string)?;
+    Ok(())
+}
+pub fn disable_mold(cargo_dir: &str) -> Result<(), Error> {
+    let mut config_toml = fs::File::open(format!("{cargo_dir}/.cargo/config.toml"))?;
+    let mut config_toml_string = String::new();
+    config_toml.read_to_string(&mut config_toml_string)?;
+
+    let new_toml_string = config_toml_string
+        .replace("linker", "#linker")
+        .replace("rustflags = [\"-C", "#rustflags = [\"-C");
 
     let mut config_toml = std::fs::OpenOptions::new()
         .write(true)
